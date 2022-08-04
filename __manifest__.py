@@ -10,6 +10,7 @@
         'project'
     ],
     'data': [
+        "security/ir.model.access.csv",
         'views/ot_registration_view.xml'
     ],
     'installable': True,
