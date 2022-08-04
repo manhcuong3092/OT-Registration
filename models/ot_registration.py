@@ -1,25 +1,39 @@
 from odoo import models, fields
 
 
-class RegisterOT(models.Model):
+class OTRegistration(models.Model):
     _name = 'ot.registration'
     _description = 'OT Registration'
 
-    def _get_default_dl(self):
-        return self.env['hr.employee'].search([('??', '=', '??')], limit=1).id
-
     employee_id = fields.Many2one('res.users', 'Employee', default=lambda self: self.env.user, readonly=True)
     project_id = fields.Many2one('project.project', string='Project')
-    # department_id = fields.Many2one('hr.department', string='Department',
-    #                                 default=lambda self: self.env.user.department_id,
-    #                                 readonly=True)
-    approver_id = fields.Many2one('hr.employee', string="Approver", related='employee_id.department_id.manager_id.')
-    department_lead_id = fields.Many2one('hr.employee', string='Department Lead', related='department_id.manager_id',
-                                         readonly=True, tracking=True)
+    approver_id = fields.Many2one('hr.employee', string="Approver")
+    department_lead_id = fields.Many2one('hr.employee', string='Department Lead',
+                                         related='employee_id.department_id.manager_id',
+                                         readonly=True)
     created_date = fields.Datetime('Created date', readonly=True, default=lambda self: fields.datetime.now())
+    state = fields.Selection([('draft', 'Draft'), ('to_approve', 'To Approve'),
+                              ('pm_approved', 'PM Approved'), ('dl_approved', 'DL Approved')],
+                             default='draft', string='Status', tracking=True)
+
+
+class OTRequestLine(models.Model):
+    _name = "ot.request.line"
+    _description = "OT Request Line"
+
+    state = fields.Selection([('draft', 'Draft'), ('to_approve', 'To Approve'),
+                              ('pm_approved', 'PM Approved'), ('dl_approved', 'DL Approved')],
+                             default='draft', string='Status', tracking=True)
 
     ot_from = fields.Datetime('From')
     ot_to = fields.Datetime('To')
+    wfh = fields.Boolean('WFH')
+    ot_hours = fields.Integer('OT Hours')
+    state = fields.Char('State')
+    late_approved = fields.Boolean('Late Approved')
+    hr_note = fields.Char('Hr notes')
+    attendance_note = fields.Char('Attendance notes')
+    warning = fields.Char('Warning')
     category = fields.Selection(selection=[('normal_day', 'Ngày bình thường'),
                                            ('normal_day_morning', 'OT ban ngày (6h - 8h30)'),
                                            ('normal_day_night', 'Ngày bình thường - Ban đêm'),
@@ -32,10 +46,4 @@ class RegisterOT(models.Model):
                                            ('compensatory_night', 'Bù ngày lễ vào ban đêm')], default='normal_day',
                                 required=True,
                                 track_visibility='onchange', string='OT Category')
-    # wfh = fields.Boolean('WFH')
-    # ot_hours = fields.Integer('OT hours')
-    # state = fields.Char('State')
-    # late_approved = fields.Boolean('Late Approved')
-    # hr_note = fields.Char('Hr notes')
-    # attendance_note = fields.Char('Attendance notes')
-    # warning = fields.Char('Warning')
+    ot_registration_id = fields.Many2one('ot.registration', string='OT Registration')
