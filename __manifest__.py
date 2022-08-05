@@ -11,6 +11,7 @@
     ],
     'data': [
         "security/ir.model.access.csv",
+        'security/ot_security.xml',
         'views/ot_registration_view.xml'
     ],
     'installable': True,
