@@ -12,7 +12,8 @@
     'data': [
         "security/ir.model.access.csv",
         'security/ot_security.xml',
-        'views/ot_registration_view.xml'
+        'views/ot_registration_view.xml',
+        'data/mail_template_pm.xml',
     ],
     'installable': True,
     'application': True,

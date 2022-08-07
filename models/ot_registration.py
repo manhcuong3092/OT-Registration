@@ -28,6 +28,9 @@ class OTRegistration(models.Model):
 
     def action_submit(self):
         self.state = 'to_approve'
+        template_id = self.env.ref('ot_registration.ot_registration_email_pm_template').id
+        template = self.env['mail.template'].browse(template_id)
+        template.send_mail(self.id, force_send=True)
 
     def action_pm_approve(self):
         self.state = 'pm_approved'
