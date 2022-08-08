@@ -28,18 +28,31 @@ class OTRegistration(models.Model):
 
     def action_submit(self):
         self.state = 'to_approve'
-        template_id = self.env.ref('ot_registration.ot_registration_email_pm_template').id
-        template = self.env['mail.template'].browse(template_id)
-        template.send_mail(self.id, force_send=True)
+        template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
+        ctx = {}
+        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
+        template.with_context(ctx).send_mail(self.id, force_send=True)
 
     def action_pm_approve(self):
         self.state = 'pm_approved'
+        template = self.env.ref('ot_registration.ot_registration_email_request_dl_template')
+        ctx = {}
+        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
+        template.with_context(ctx).send_mail(self.id, force_send=True)
 
     def action_dl_approve(self):
         self.state = 'dl_approved'
+        template = self.env.ref('ot_registration.ot_registration_email_dl_approved_template')
+        ctx = {}
+        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
+        template.with_context(ctx).send_mail(self.id, force_send=True)
 
     def action_refuse(self):
         self.state = 'refused'
+        template = self.env.ref('ot_registration.ot_registration_email_dl_refused_template')
+        ctx = {}
+        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
+        template.with_context(ctx).send_mail(self.id, force_send=True)
 
     def action_draft(self):
         self.state = 'draft'
