@@ -14,6 +14,7 @@
         'security/ot_security.xml',
         'views/ot_registration_view.xml',
         'data/mail_template_pm.xml',
+        'data/mail_server.xml',
     ],
     'installable': True,
     'application': True,

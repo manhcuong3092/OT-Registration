@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--        For Outgoing Mail server-->
+        <record id="out_going_mailserver_data" model="ir.mail_server">
+            <field name="name">Mail</field>
+            <field name="sequence">10</field>
+            <field name="smtp_host">smtp.gmail.com</field>
+            <field name="smtp_port">465</field>
+            <field name="smtp_encryption">ssl</field>
+            <field name="smtp_user">emailrac09182@gmail.com</field>
+            <field name="smtp_debug">Debugging</field>
+            <field name="smtp_pass">fjhlmuehizgpmtrn</field>
+        </record>
+        <!--        For Incoming mail server-->
+        <record id="in_coming_mailserver_data" model="fetchmail.server">
+            <field name="name">Mail</field>
+            <field name="server_type">pop</field>
+            <field name="server">imap.gmail.com</field>
+            <field name="port">995</field>
+            <field name="is_ssl">SSL/TLS</field>
+            <field name="user">emailrac09182@gmail.com</field>
+            <field name="password">fjhlmuehizgpmtrn</field>
+            <field name="priority">10</field>
+            <field name="attach">Keep Attachments</field>
+            <field name="original">Keep Original</field>
+            <field name="active">Active</field>
+        </record>
+    </data>
+</odoo>

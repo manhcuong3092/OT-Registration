@@ -37,5 +37,6 @@ class OTRequestLine(models.Model):
     @api.onchange('ot_from', 'ot_to')
     def _compute_ot_hours(self):
         for rec in self:
-            delta = rec.ot_to - rec.ot_from
-            rec.ot_hours = round((delta/datetime.timedelta(hours=1)), 2)
+            if rec.ot_to and rec.ot_from:
+                delta = rec.ot_to - rec.ot_from
+                rec.ot_hours = round((delta/datetime.timedelta(hours=1)), 1)
