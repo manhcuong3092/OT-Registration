@@ -1,16 +1,19 @@
 import datetime
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class OTRequestLine(models.Model):
     _name = "ot.request.line"
     _description = "OT Request Line"
 
+    name = fields.Char('Request line order', require=True, copy=False, readonly=True,
+                       default=lambda self: _('New'))
+
     ot_from = fields.Datetime('From')
     ot_to = fields.Datetime('To')
     wfh = fields.Boolean('WFH')
-    ot_hours = fields.Integer('OT Hours', compute='_compute_ot_hours', readonly=True)
+    ot_hours = fields.Integer('OT Hours', compute='_compute_ot_hours', readonly=True, store=True)
     state = fields.Selection([('draft', 'Draft'), ('to_approve', 'To Approve'),
                               ('pm_approved', 'PM Approved'), ('dl_approved', 'DL Approved'),
                               ('refused', 'Refused')],
@@ -34,9 +37,31 @@ class OTRequestLine(models.Model):
                                 track_visibility='onchange', string='OT Category')
     ot_registration_id = fields.Many2one('ot.registration', string='OT Registration')
 
+    @api.model
+    def create(self, vals):
+        if vals.get('name', _('New')) == _('New'):
+            vals['name'] = self.env['ir.sequence'].next_by_code('ot.request.line') or _('New')
+        res = super(OTRequestLine, self).create(vals)
+        return res
+
     @api.onchange('ot_from', 'ot_to')
     def _compute_ot_hours(self):
         for rec in self:
             if rec.ot_to and rec.ot_from:
                 delta = rec.ot_to - rec.ot_from
-                rec.ot_hours = round((delta/datetime.timedelta(hours=1)), 1)
+                rec.ot_hours = round((delta / datetime.timedelta(hours=1)), 1)
+
+    def action_submit(self):
+        self.state = 'to_approve'
+
+    def action_pm_approve(self):
+        self.state = 'pm_approved'
+
+    def action_dl_approve(self):
+        self.state = 'dl_approved'
+
+    def action_refuse(self):
+        self.state = 'refused'
+
+    def action_draft(self):
+        self.state = 'draft'

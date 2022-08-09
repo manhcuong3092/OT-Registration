@@ -1,10 +1,13 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class OTRegistration(models.Model):
     _name = 'ot.registration'
     _description = 'OT Registration'
     _inherit = ["mail.thread", 'mail.activity.mixin']
+
+    name = fields.Char('Request line order', require=True, copy=False, readonly=True,
+                       default=lambda self: _('New'))
 
     def _get_employee_id(self):
         employee_rec = self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
@@ -29,40 +32,39 @@ class OTRegistration(models.Model):
     def action_submit(self):
         self.state = 'to_approve'
         template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
-        ctx = {}
-        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
-        template.with_context(ctx).send_mail(self.id, force_send=True)
+        template.send_mail(self.id, force_send=True)
 
     def action_pm_approve(self):
         self.state = 'pm_approved'
         template = self.env.ref('ot_registration.ot_registration_email_request_dl_template')
-        ctx = {}
-        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
-        template.with_context(ctx).send_mail(self.id, force_send=True)
+        template.send_mail(self.id, force_send=True)
 
     def action_dl_approve(self):
         self.state = 'dl_approved'
         template = self.env.ref('ot_registration.ot_registration_email_dl_approved_template')
-        ctx = {}
-        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
-        template.with_context(ctx).send_mail(self.id, force_send=True)
+        template.send_mail(self.id, force_send=True)
 
-    def action_refuse(self):
+    def action_pm_refuse(self):
+        self.state = 'refused'
+        template = self.env.ref('ot_registration.ot_registration_email_pm_refused_template')
+        template.send_mail(self.id, force_send=True)
+
+    def action_dl_refuse(self):
         self.state = 'refused'
         template = self.env.ref('ot_registration.ot_registration_email_dl_refused_template')
-        ctx = {}
-        ctx['mail_from'] = self.env.ref('ot_registration.out_going_mailserver_data').smtp_user
-        template.with_context(ctx).send_mail(self.id, force_send=True)
+        template.send_mail(self.id, force_send=True)
 
     def action_draft(self):
         self.state = 'draft'
 
     @api.model
     def create(self, vals):
+        if vals.get('name', _('New')) == _('New'):
+            vals['name'] = self.env['ir.sequence'].next_by_code('ot.registration') or _('New')
         res = super(OTRegistration, self).create(vals)
         return res
 
     @api.onchange('project_id')
     def onchange_project_id(self):
         if self.project_id and self.project_id.user_id and self.project_id.user_id.employee_id:
-                    self.project_manager_id = self.project_id.user_id.employee_id.id
+            self.project_manager_id = self.project_id.user_id.employee_id.id

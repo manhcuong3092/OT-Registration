@@ -31,9 +31,13 @@
                                 states="to_approve,pm_approved"
                                 groups="ot_registration.group_ot_dl"
                                 class="btn-primary" type="object"/>
-                        <button id="button_refuse" name="action_refuse" string="Refuse"
+                        <button id="button_refuse" name="action_pm_refuse" string="Refuse"
                                 states="to_approve,pm_approved,dl_approved"
-                                groups="ot_registration.group_ot_pm,ot_registration.group_ot_dl"
+                                groups="ot_registration.group_ot_pm"
+                                class="btn-primary" type="object"/>
+                        <button id="button_refuse" name="action_dl_refuse" string="Refuse"
+                                states="to_approve,pm_approved,dl_approved"
+                                groups="ot_registration.group_ot_dl"
                                 class="btn-primary" type="object"/>
                         <button id="button_draft" name="action_draft" string="Set To Draft" states="to_approve,refused"
                                 class="btn-secondary" type="object"/>
@@ -41,6 +45,11 @@
                                statusbar_visible="draft,to_approve,pm_approved,dl_approved,refused"/>
                     </header>
                     <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
                         <group>
                             <group>
                                 <field name="project_id"/>

@@ -5,10 +5,10 @@
         <record id="ot_registration_email_request_pm_template" model="mail.template">
             <field name="name">OT Request: Send by email to PM</field>
             <field name="model_id" ref="ot_registration.model_ot_registration"/>
-            <field name="email_from">${ctx.mail_from}</field>
+            <field name="email_from">${object.employee_id.user_id.email_formatted|safe}</field>
             <field name="email_to">${object.project_manager_id.user_id.email_formatted|safe}</field>
             <field name="email_cc">
-                ${object.employee_id.user_id.email_formatted|safe},${object.department_lead_id.user_id.email_formatted|safe}
+                ${object.department_lead_id.user_id.email_formatted|safe}
             </field>
             <field name="subject">OT Registration Detail of (Ref ${object.employee_id.user_id.name or 'n/a'})</field>
             <field name="body_html" type="html">
@@ -26,16 +26,15 @@
             <field name="report_name">
                 OT Registration of ${object.employee_id.user_id.name |safe}
             </field>
-            <field name="mail_server_id" ref="ot_registration.out_going_mailserver_data"/>
-            <field name="auto_delete">1</field>
+            <field name="auto_delete">0</field>
         </record>
 
         <record id="ot_registration_email_request_dl_template" model="mail.template">
             <field name="name">OT Request: Send by email to DL</field>
             <field name="model_id" ref="ot_registration.model_ot_registration"/>
-            <field name="email_from">${ctx.mail_from}</field>
+            <field name="email_from">${object.project_manager_id.user_id.email_formatted|safe}</field>
             <field name="email_cc">
-                ${object.employee_id.user_id.email_formatted|safe},${object.project_manager_id.user_id.email_formatted|safe}
+                ${object.employee_id.user_id.email_formatted|safe}
             </field>
             <field name="email_to">${object.department_lead_id.user_id.email_formatted|safe}</field>
             <field name="subject">OT Registration Detail of (Ref ${object.employee_id.user_id.name or 'n/a'})</field>
@@ -56,16 +55,15 @@
             <field name="report_name">
                 OT Registration of ${object.employee_id.user_id.name |safe}
             </field>
-            <field name="mail_server_id" ref="ot_registration.out_going_mailserver_data"/>
-            <field name="auto_delete">1</field>
+            <field name="auto_delete">0</field>
         </record>
 
         <record id="ot_registration_email_dl_approved_template" model="mail.template">
             <field name="name">OT Request: DL approved</field>
             <field name="model_id" ref="ot_registration.model_ot_registration"/>
-            <field name="email_from">${ctx.mail_from}</field>
+            <field name="email_from">${object.department_lead_id.user_id.email_formatted</field>
             <field name="email_cc">
-                ${object.project_manager_id.user_id.email_formatted|safe},${object.department_lead_id.user_id.email_formatted|safe}
+                ${object.project_manager_id.user_id.email_formatted|safe}|safe}
             </field>
             <field name="email_to">${object.employee_id.user_id.email_formatted|safe}</field>
             <field name="subject">OT Registration of (Ref ${object.employee_id.user_id.name or 'n/a'}) approved</field>
@@ -84,16 +82,15 @@
             <field name="report_name">
                 OT Registration of ${object.employee_id.user_id.name |safe}
             </field>
-            <field name="mail_server_id" ref="ot_registration.out_going_mailserver_data"/>
-            <field name="auto_delete">1</field>
+            <field name="auto_delete">0</field>
         </record>
 
-        <record id="ot_registration_email_dl_refused_template" model="mail.template">
+        <record id="ot_registration_email_pm_refused_template" model="mail.template">
             <field name="name">OT Request: Refused</field>
             <field name="model_id" ref="ot_registration.model_ot_registration"/>
-            <field name="email_from">${ctx.mail_from}</field>
+            <field name="email_from">${object.project_manager_id.user_id.email_formatted|safe}</field>
             <field name="email_cc">
-                ${object.project_manager_id.user_id.email_formatted|safe},${object.department_lead_id.user_id.email_formatted|safe}
+                ${object.department_lead_id.user_id.email_formatted|safe}
             </field>
             <field name="email_to">${object.employee_id.user_id.email_formatted|safe}</field>
             <field name="subject">OT Registration of (Ref ${object.employee_id.user_id.name or 'n/a'}) approved</field>
@@ -112,8 +109,34 @@
             <field name="report_name">
                 OT Registration of ${object.employee_id.user_id.name |safe}
             </field>
-            <field name="mail_server_id" ref="ot_registration.out_going_mailserver_data"/>
-            <field name="auto_delete">1</field>
+            <field name="auto_delete">0</field>
+        </record>
+
+        <record id="ot_registration_email_dl_refused_template" model="mail.template">
+            <field name="name">OT Request: Refused</field>
+            <field name="model_id" ref="ot_registration.model_ot_registration"/>
+            <field name="email_from">${object.department_lead_id.user_id.email_formatted|safe}</field>
+            <field name="email_cc">
+                ${object.project_manager_id.user_id.email_formatted|safe}
+            </field>
+            <field name="email_to">${object.employee_id.user_id.email_formatted|safe}</field>
+            <field name="subject">OT Registration of (Ref ${object.employee_id.user_id.name or 'n/a'}) approved</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    Dear ${object.employee_id.user_id.name}
+                    <br/>
+                    <br/>
+                    Your request OT has been refused.
+                    <br/>
+                    <br/>
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    </p>
+                </div>
+            </field>
+            <field name="report_name">
+                OT Registration of ${object.employee_id.user_id.name |safe}
+            </field>
+            <field name="auto_delete">0</field>
         </record>
     </data>
 </odoo>

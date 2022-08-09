@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <!-- Sequences for hospital.patient -->
+        <record id="seq_ot_registration" model="ir.sequence">
+            <field name="name">OT Registration Sequence</field>
+            <field name="code">ot.registration</field>
+            <field name="prefix">OT</field>
+            <field name="padding">5</field>
+            <field eval="False" name="company_id"/>
+        </record>
+
+         <!-- Sequences for hospital.patient -->
+        <record id="seq_ot_request_line" model="ir.sequence">
+            <field name="name">OT Request Line Sequence</field>
+            <field name="code">ot.request.line</field>
+            <field name="prefix">RL</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>
