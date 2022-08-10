@@ -1,3 +1,5 @@
+import datetime
+
 from odoo import models, fields, api, _
 
 
@@ -37,8 +39,30 @@ class OTRegistration(models.Model):
                 self.ot_month = str(rec.ot_from.month) + '/' + str(rec.ot_to.year)
                 break
 
+    def check_valid_ot(self):
+        for rec in self.ot_request_line_ids:
+            if rec.ot_to and rec.ot_from:
+                if datetime.datetime.now() > rec.ot_from:
+                    return False
+                delta = rec.ot_to - rec.ot_from
+                ot_hours = round((delta / datetime.timedelta(hours=1)), 1)
+                if ot_hours <= 0:
+                    return False
+            else: return False
+        return True
+
     def action_submit(self):
         if self.ot_request_line_ids :
+            if not self.check_valid_ot():
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'message': 'Invalid date time OT',
+                        'type': 'danger',
+                        'sticky': False
+                    }
+                }
             self.state = 'to_approve'
             template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
             template.send_mail(self.id, force_send=True)
