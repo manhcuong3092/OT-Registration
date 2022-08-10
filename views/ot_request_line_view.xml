@@ -7,6 +7,8 @@
             <field name="arch" type="xml">
                 <tree multi_edit="1">
                     <field name="ot_registration_id"/>
+                    <field name="employee_id_related"/>
+                    <field name="project_id_related"/>
                     <field name="ot_from"/>
                     <field name="ot_to"/>
                     <field name="category"/>
