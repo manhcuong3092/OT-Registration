@@ -36,6 +36,8 @@ class OTRequestLine(models.Model):
                                 required=True,
                                 track_visibility='onchange', string='OT Category')
     ot_registration_id = fields.Many2one('ot.registration', string='OT Registration')
+    employee_id_related = fields.Many2one('hr.employee', string='Employee', related='ot_registration_id.employee_id')
+    project_id_related = fields.Many2one('project.project', string='Project', related='ot_registration_id.project_id')
 
     @api.model
     def create(self, vals):
