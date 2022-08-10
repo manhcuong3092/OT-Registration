@@ -42,37 +42,31 @@ class OTRegistration(models.Model):
     def check_valid_ot(self):
         for rec in self.ot_request_line_ids:
             if rec.ot_to and rec.ot_from:
-                if datetime.datetime.now() > rec.ot_from:
-                    return False
+                delta = rec.ot_from - datetime.datetime.now()
+                if delta.days < 2:
+                    return {'valid': False, 'message': 'Datetime OT from must be before 2 days from now',
+                            'type': 'danger'}
                 delta = rec.ot_to - rec.ot_from
                 ot_hours = round((delta / datetime.timedelta(hours=1)), 1)
                 if ot_hours <= 0:
-                    return False
-            else: return False
-        return True
+                    return {'valid': False, 'message': 'OT Hours must be greater than 0', 'type': 'danger'}
+            else:
+                return {'valid': False, 'message': 'Empty field ot_from or ot_to', 'type': 'danger'}
+        return {'valid': True, 'message': 'Submit successfully!', 'type': 'success'}
 
     def action_submit(self):
-        if self.ot_request_line_ids :
-            if not self.check_valid_ot():
-                return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'message': 'Invalid date time OT',
-                        'type': 'danger',
-                        'sticky': False
-                    }
-                }
-            self.state = 'to_approve'
-            template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
-            template.send_mail(self.id, force_send=True)
-            message = 'Submit successfully!'
+        if self.ot_request_line_ids:
+            check = self.check_valid_ot()
+            if check['valid']:
+                self.state = 'to_approve'
+                template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
+                template.send_mail(self.id, force_send=True)
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'message': message,
-                    'type': 'success',
+                    'message': check['message'],
+                    'type': check['type'],
                     'sticky': False
                 }
             }
