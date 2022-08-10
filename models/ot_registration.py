@@ -23,7 +23,7 @@ class OTRegistration(models.Model):
                                          related='employee_id.department_id.manager_id',
                                          readonly=True)
     created_date = fields.Datetime('Created date', readonly=True, default=lambda self: fields.datetime.now())
-    total_ot = fields.Integer('OT Hours')
+    total_ot = fields.Integer('OT Hours', compute='_compute_total_ot', readonly=True, store=True)
     state = fields.Selection([('draft', 'Draft'), ('to_approve', 'To Approve'),
                               ('pm_approved', 'PM Approved'), ('dl_approved', 'DL Approved'),
                               ('refused', 'Refused')],
@@ -31,6 +31,16 @@ class OTRegistration(models.Model):
     ot_request_line_ids = fields.One2many('ot.request.line', 'ot_registration_id',
                                           string='OT Request Line')
     ot_month = fields.Char('OT Month', compute='_compute_ot_months', readonly=True, store=True)
+
+    @api.depends('ot_request_line_ids')
+    def _compute_total_ot(self):
+        total_ot = 0
+        sec_per_hour = 3600
+        for rec in self.ot_request_line_ids:
+            if rec.ot_to and rec.ot_from:
+                delta = rec.ot_to - rec.ot_from
+                total_ot += round(delta.total_seconds() / sec_per_hour, 1)
+        self.total_ot = total_ot
 
     @api.depends('ot_request_line_ids')
     def _compute_ot_months(self):

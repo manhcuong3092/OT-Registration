@@ -62,6 +62,7 @@
                                 <field name="employee_id"/>
                                 <field name="department_lead_id"/>
                                 <field name="created_date"/>
+                                <field name="total_ot"/>
                             </group>
                         </group>
                         <notebook>

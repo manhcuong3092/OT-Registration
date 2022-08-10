@@ -48,10 +48,11 @@ class OTRequestLine(models.Model):
 
     @api.depends('ot_from', 'ot_to')
     def _compute_ot_hours(self):
+        sec_per_hour = 3600
         for rec in self:
             if rec.ot_to and rec.ot_from:
                 delta = rec.ot_to - rec.ot_from
-                rec.ot_hours = round((delta / datetime.timedelta(hours=1)), 1)
+                rec.ot_hours = round(delta.total_seconds() / sec_per_hour, 1)
 
     def action_submit(self):
         self.state = 'to_approve'
