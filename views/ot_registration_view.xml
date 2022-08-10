@@ -56,6 +56,7 @@
                                 <field name="project_manager_id" force_save="1"
                                        attrs="{'readonly': [('project_id', '!=', False)]}"/>
                                 <field name="approver_id"/>
+                                <field name="ot_month"/>
                             </group>
                             <group>
                                 <field name="employee_id"/>

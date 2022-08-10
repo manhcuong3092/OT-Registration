@@ -44,7 +44,7 @@ class OTRequestLine(models.Model):
         res = super(OTRequestLine, self).create(vals)
         return res
 
-    @api.onchange('ot_from', 'ot_to')
+    @api.depends('ot_from', 'ot_to')
     def _compute_ot_hours(self):
         for rec in self:
             if rec.ot_to and rec.ot_from:

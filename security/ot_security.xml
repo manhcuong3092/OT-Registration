@@ -35,7 +35,8 @@
     <record id="rule_dl_see_own_department_ot" model="ir.rule">
         <field name="name">DL can see own department</field>
         <field name="model_id" ref="model_ot_registration"/>
-        <field name="domain_force">[('department_lead_id.user_id', '=', user.id)]</field>
+        <field name="domain_force">[('department_lead_id.user_id', '=', user.id),
+            ('state', '!=', 'draft')]</field>
         <field name="global" eval="False"></field>
         <field name="groups" eval="[4,(ref('group_ot_dl'))]"/>
         <field name="perm_unlink" eval="1"/>
@@ -47,7 +48,8 @@
     <record id="rule_pm_see_own_project_ot" model="ir.rule">
         <field name="name">PM can see own project</field>
         <field name="model_id" ref="model_ot_registration"/>
-        <field name="domain_force">[('project_manager_id.user_id', '=', user.id)]</field>
+        <field name="domain_force">[('project_manager_id.user_id', '=', user.id),
+            ('state', '!=', 'draft')]</field>
         <field name="global" eval="False"></field>
         <field name="groups" eval="[4,(ref('group_ot_pm'))]"/>
         <field name="perm_unlink" eval="1"/>

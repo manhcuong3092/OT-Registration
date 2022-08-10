@@ -28,11 +28,41 @@ class OTRegistration(models.Model):
                              default='draft', string='Status', tracking=True)
     ot_request_line_ids = fields.One2many('ot.request.line', 'ot_registration_id',
                                           string='OT Request Line')
+    ot_month = fields.Char('OT Month', compute='_compute_ot_months', readonly=True, store=True)
+
+    @api.depends('ot_request_line_ids')
+    def _compute_ot_months(self):
+        for rec in self.ot_request_line_ids:
+            if rec.ot_to and rec.ot_from:
+                self.ot_month = str(rec.ot_from.month) + '/' + str(rec.ot_to.year)
+                break
 
     def action_submit(self):
-        self.state = 'to_approve'
-        template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
-        template.send_mail(self.id, force_send=True)
+        if self.ot_request_line_ids :
+            self.state = 'to_approve'
+            template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
+            template.send_mail(self.id, force_send=True)
+            message = 'Submit successfully!'
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'message': message,
+                    'type': 'success',
+                    'sticky': False
+                }
+            }
+        else:
+            message = 'OT registration must have 1 request line'
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'message': message,
+                    'type': 'danger',
+                    'sticky': True
+                }
+            }
 
     def action_pm_approve(self):
         self.state = 'pm_approved'
