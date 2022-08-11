@@ -23,7 +23,7 @@ class OTRegistration(models.Model):
                                          related='employee_id.department_id.manager_id',
                                          readonly=True)
     created_date = fields.Datetime('Created date', readonly=True, default=lambda self: fields.datetime.now())
-    total_ot = fields.Integer('OT Hours', compute='_compute_total_ot', readonly=True, store=True)
+    total_ot = fields.Float('OT Hours', compute='_compute_total_ot', digits=(12,1), readonly=True, store=True)
     state = fields.Selection([('draft', 'Draft'), ('to_approve', 'To Approve'),
                               ('pm_approved', 'PM Approved'), ('dl_approved', 'DL Approved'),
                               ('refused', 'Refused')],

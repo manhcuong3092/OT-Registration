@@ -13,7 +13,7 @@ class OTRequestLine(models.Model):
     ot_from = fields.Datetime('From')
     ot_to = fields.Datetime('To')
     wfh = fields.Boolean('WFH')
-    ot_hours = fields.Integer('OT Hours', compute='_compute_ot_hours', readonly=True, store=True)
+    ot_hours = fields.Float('OT Hours', compute='_compute_ot_hours', digits=(12,1), readonly=True, store=True)
     state = fields.Selection([('draft', 'Draft'), ('to_approve', 'To Approve'),
                               ('pm_approved', 'PM Approved'), ('dl_approved', 'DL Approved'),
                               ('refused', 'Refused')],
