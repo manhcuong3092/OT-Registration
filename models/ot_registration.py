@@ -1,6 +1,7 @@
 import datetime
 
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class OTRegistration(models.Model):
@@ -8,7 +9,7 @@ class OTRegistration(models.Model):
     _description = 'OT Registration'
     _inherit = ["mail.thread", 'mail.activity.mixin']
 
-    name = fields.Char('Request line order', require=True, copy=False, readonly=True,
+    name = fields.Char('Request registration order', require=True, copy=False, readonly=True,
                        default=lambda self: _('New'))
 
     def _get_employee_id(self):
@@ -71,26 +72,12 @@ class OTRegistration(models.Model):
                 self.state = 'to_approve'
                 template = self.env.ref('ot_registration.ot_registration_email_request_pm_template')
                 template.send_mail(self.id, force_send=True)
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'message': check['message'],
-                    'type': check['type'],
-                    'sticky': False
-                }
-            }
+            else:
+                raise ValidationError(check['message'])
+
         else:
             message = 'OT registration must have 1 request line'
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'message': message,
-                    'type': 'danger',
-                    'sticky': True
-                }
-            }
+            raise ValidationError(message)
 
     def action_pm_approve(self):
         self.state = 'pm_approved'
